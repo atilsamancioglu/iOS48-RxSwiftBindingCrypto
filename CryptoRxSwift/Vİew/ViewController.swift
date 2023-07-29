@@ -40,7 +40,7 @@ class ViewController: UIViewController, UITableViewDelegate {
                         
             cryptoVM
                 .error
-                .observe(on: MainScheduler.instance)
+                .observe(on: MainScheduler.asyncInstance)
                 .subscribe(onNext: { failure in
                     print(failure)
                 })
@@ -61,7 +61,9 @@ class ViewController: UIViewController, UITableViewDelegate {
                 .disposed(by: disposeBag)
         */
            
-        cryptoVM.cryptos.bind(to: tableView.rx.items(cellIdentifier: "cryptoTableViewCellID", cellType: CryptoTableViewCell.self)) { (row,item,cell) in
+        cryptoVM.cryptos
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(to: tableView.rx.items(cellIdentifier: "cryptoTableViewCellID", cellType: CryptoTableViewCell.self)) { (row,item,cell) in
             cell.item = item
         }.disposed(by: disposeBag)
         
